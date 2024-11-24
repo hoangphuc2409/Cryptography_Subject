@@ -1,0 +1,64 @@
+#infoTable {
+    border-collapse: collapse;
+    position: relative;
+    width: 95%;
+    top: 20px; left: 20px;
+    margin-bottom: 15px;
+}
+
+#infoTable th,
+#infoTable td {
+    border: 1px solid black;
+    padding: 8px;
+}  
+  
+#infoTable th {
+    font-weight: bold;
+    text-align: left;
+    font-size: 20px;
+}
+
+#infoTable .imgSrc {
+    width: 20%;
+}
+#infoTable .content {
+    width: 60%;
+}
+#infoTable .settings {
+    width: 20%;
+}
+
+/*Content*/
+#infoTable .picture {
+    border-radius: 8px;
+    width: 125px; height: 125px;
+    margin-left: 20px;
+}
+#infoTable .rowContent {
+    font-size: 20px;
+    padding-left: 20px;
+    font-family: 'Calibri';
+}
+
+#infoTable .btnDownload {
+    display: inline-block;
+    font-size: 16px;
+    padding: 5px;
+    background-color: #0090d4;
+    color: white;
+    border-radius: 8px;
+    border: 0.5px solid transparent;
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+#infoTable .btnDelete {
+    display: inline-block;
+    font-size: 16px;
+    padding: 5px;
+    background-color: indianred;
+    border-radius: 8px;
+    border: 0.5px solid transparent;
+    margin: 10px;
+    cursor: pointer;
+}
