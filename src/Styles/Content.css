@@ -5,13 +5,21 @@
 }
 
 .container {
-    width: 1400px;
-    margin: 20px auto;
-    columns: 4;
-    column-gap: 20px;
+    width: 98.5%;
+    margin: 20px 12px;
+    columns: 6;
+    column-gap: 18px;
 }
 
 .container .box {
+    position: relative;
+    width: 100%;
+    margin-bottom: 10px;
+    break-inside: avoid;
+    cursor: pointer;
+}
+
+.container .box:hover {
     width: 100%;
     margin-bottom: 10px;
     break-inside: avoid;
@@ -25,18 +33,35 @@
 @media (max-width: 1200px) {
     .container {
         width: calc(100% -40px);
+        columns: 5;
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        columns: 4;
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
         columns: 3;
     }
 }
 
-@media (max-width: 768px) {
-    .container {
-        columns: 2;
-    }
+/*Tạo hiệu ứng hover ảnh*/
+.overlay {
+    position: absolute; /* Đặt lớp phủ ở vị trí tuyệt đối */
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5); /* Màu đen với độ trong suốt */
+    opacity: 0; /* Bắt đầu với độ trong suốt 0 */
+    transition: opacity 0.3s; /* Hiệu ứng chuyển tiếp */
+    border-radius: 15px; /* Bo góc cho lớp phủ */
 }
 
-@media (max-width: 768px) {
-    .container {
-        columns: 1;
-    }
+.container .box:hover .overlay {
+    opacity: 1; /* Khi hover, lớp phủ sẽ hiển thị */
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route} from 'react-router-dom';
 import { Register } from './Components/Register';
 import SignIn from './Components/Login';
 import { Content } from './Components/Content';
@@ -7,6 +7,7 @@ import { Settings } from './Components/Settings';
 import { Log } from './Components/Log.js';
 import { Upload } from './Components/Upload';
 import { TopMenu } from './Components/TopMenu';
+import { PicDetail } from './Components/PicDetail.js';
 import ProtectedRoute from './Components/ProtectedRoute';
 // import "./ImageDatabase.js";
 //import "./LogDatabase.js";
@@ -28,6 +29,16 @@ function App() {
           } 
         />
 
+        <Route 
+          path="/Image/:id" 
+          element={
+            <ProtectedRoute>
+              <TopMenu />
+              <PicDetail />
+            </ProtectedRoute>
+          } 
+        />
+        
         <Route 
           path="/Settings" 
           element={
