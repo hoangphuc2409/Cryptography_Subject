@@ -7,10 +7,17 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { database } from "../firebase-config";
 import { ref, get } from "firebase/database";
+import { getAuth } from "firebase/auth";
+import { UpdateLog } from "./UpdateLog";
 
 function PicDetail () {
     const navigate = useNavigate();
 
+    const LogDatabase = ref(database, 'LogHistory/Log');
+    const auth = getAuth();
+    const currentUser = auth.currentUser;
+
+    //Xử lý hiển thị ảnh
     const {id} = useParams();
     const [imageData, setImageData] = useState(null);
 
@@ -29,6 +36,17 @@ function PicDetail () {
         navigate('/Home');
       }
 
+      //Download button
+      const handleDownload = (imageSrc, id) => {
+        const link = document.createElement("a");
+        link.href = imageSrc;
+        link.download = "image.jpg";
+        link.target = "_blank";
+        link.click();
+        //Lưu hành động vào log
+        UpdateLog(LogDatabase, `Tải 1 ảnh về máy. ID của ảnh được tải: ${id}`, currentUser.email);
+      };
+
 
     return (
         <div className="detailContainer">
@@ -40,7 +58,7 @@ function PicDetail () {
                 <div className="content">
                     <ul>
                         <li className="icon"><FontAwesomeIcon icon={faHeart} /></li>
-                        <li className="icon"><FontAwesomeIcon icon={faDownload} /></li>
+                        <li className="icon" onClick={() => handleDownload(imageData.imgSrc, id)} ><FontAwesomeIcon icon={faDownload} /></li>
                         <li className="icon"><FontAwesomeIcon icon={faEllipsis} /></li>
                     </ul>
                     <p className="text">{imageData.content}</p>

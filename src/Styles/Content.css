@@ -51,17 +51,58 @@
 
 /*Tạo hiệu ứng hover ảnh*/
 .overlay {
-    position: absolute; /* Đặt lớp phủ ở vị trí tuyệt đối */
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5); /* Màu đen với độ trong suốt */
-    opacity: 0; /* Bắt đầu với độ trong suốt 0 */
-    transition: opacity 0.3s; /* Hiệu ứng chuyển tiếp */
-    border-radius: 15px; /* Bo góc cho lớp phủ */
+    position: absolute; 
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5); 
+    opacity: 0;
+    transition: opacity 0.3s; 
+    border-radius: 15px; 
 }
 
 .container .box:hover .overlay {
-    opacity: 1; /* Khi hover, lớp phủ sẽ hiển thị */
+    opacity: 1; /* lớp phủ sẽ hiển thị khi hover */
 }
+
+/*Save button*/
+.saveBtn {
+    position: absolute;
+    top: 10px; right: 10px;
+    background-color: #e60023;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 10px 12px;
+    font-size: 15px;
+    cursor: pointer;
+    display: none;
+    transition: opacity 0.3s;
+  }
+
+  .box:hover .saveBtn,
+  .box:hover .bottomBtn {
+    display: block;
+  }
+
+  .bottomBtn {
+    position: absolute;
+    bottom: 15px; left: 8px; 
+    display: none; 
+    gap: 5px; /* Khoảng cách giữa các nút */
+  }
+
+  .bottomBtn button {
+    background-color: white;
+    width: 30px; height: 30px;
+    border: none;
+    color: black;
+    padding: 5px;
+    cursor: pointer;
+    border-radius: 50%;
+    margin-left: 5px;
+  }
+
+  .box:hover .bottomBtn{
+    display: flex;
+    align-items: center;
+    justify-content: center; 
+  }

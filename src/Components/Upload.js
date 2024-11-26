@@ -66,7 +66,7 @@ function Upload() {
           <img className="imgUpload" alt="" />
         </div>
         <input className='imgChosen' type="file" required onChange={handleImageUpload} />
-        <p className='uploadtxt'>Nội dung ảnh</p>
+        <p className='uploadtxt'>Content</p>
         <input className='contentInput' type='text' onChange={handleContent} />
         <button className='uploadBtn' onClick={() => handleUpload()}>UPLOAD</button>
       </div>

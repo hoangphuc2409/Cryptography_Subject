@@ -39,6 +39,7 @@
     float: left;
     margin: 10px 15px;
     list-style-type: none;
+    cursor: pointer;
 }
 
 .detailContainer .box .content .text {

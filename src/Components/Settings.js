@@ -34,17 +34,6 @@ function Settings() {
     return { uid, role };
   };
 
-  //Xử lý download
-  const handleDownload = (imageSrc, id) => {
-    const link = document.createElement("a");
-    link.href = imageSrc;
-    link.download = "image.jpg";
-    link.target = "_blank";
-    link.click();
-    //Lưu hành động vào log
-    UpdateLog(LogDatabase, `Tải 1 ảnh về máy. ID của ảnh được tải: ${id}`, currentUser.email);
-  };
-
   // Xử lý delete
   const handleDelete = (id) => {
     const updatedList = imageList.filter(image => image.id !== id);
@@ -72,7 +61,6 @@ function Settings() {
               </td>
               <td className="rowContent">{image.content}</td>
               <td>
-                <button className="btnDownload" onClick={() => handleDownload(image.imgSrc, image.id)}>Download</button>
                 {user && user.key && (
                   // Decode user.key and check role
                   <button className="btnDelete" onClick={() => {
