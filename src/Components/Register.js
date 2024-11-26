@@ -48,6 +48,7 @@ const checkConfirm = (event) =>{
             const uid = user.uid;
             set(ref(database, 'UserInformation/'+ uid), {
                 username: name,
+                email: email,
                 phone: phone
             });
             if(notify === ""){
@@ -59,7 +60,7 @@ const checkConfirm = (event) =>{
 
     return (
         <div className='background2'>
-            <title>NerdyGrooves Register</title>
+            <title>Register</title>
             <div>
                 <section>
                     <div className="form-box">

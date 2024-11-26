@@ -27,18 +27,31 @@
     border-radius: 18px;
     font-size: 18px;
     padding: 8px 10px;
+    cursor: pointer;
 }
 
-.Items .logOut {
+.Items .rightBtn {
     float: right;
-    margin-right: 20px;
+    display: flex;
+    margin-right: 20px; margin-top: 10px;
+    gap: 10px;
 }
 
 .logOutBtn {
     background-color: rgb(215, 32, 32);
-    border-radius: 8px;
+    border-radius: 10px;
     border: 0.2px solid rgb(215, 32, 32);
-    padding: 5px 7px;
-    color: white !important;
+    padding: 5px 10px;
+    color: white;
     cursor: pointer;
+}
+
+.accBtn {
+    margin-right: 5px;
+    width: 40px; height: 40px;
+    border: none;
+    cursor: pointer;
+    border-radius: 50%;
+    color: black;
+    font-size: 20px;
 }

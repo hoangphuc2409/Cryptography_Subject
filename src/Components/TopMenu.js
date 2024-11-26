@@ -1,23 +1,31 @@
 import '../Styles/TopMenu.css';
 import { Link } from 'react-router-dom';
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from './UserContext';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUser } from '@fortawesome/free-solid-svg-icons';
 
 function TopMenu() {
     const navigate = useNavigate();
-    const { logout } = useContext(UserContext);
 
+    //LogOut button
+    const { logout } = useContext(UserContext);
     const handleLogout = () => {
         logout();
         navigate('/');
     };
     
-    // Cập nhật button đang được chọn
+    //Xử lý button đang được chọn
     const [activeIndex, setActiveIndex] = useState(null);
     const handleBtnClick = (index) => {
         setActiveIndex(index);
     };
+
+    //Profile button
+    const handleProfile = () => {
+        navigate('/Profile');
+    }
 
     return (
         <div className="HeaderBar">
@@ -75,8 +83,10 @@ function TopMenu() {
                     </Link>
                 </li>
 
-                {/*LOGOUT*/ }
-                <li className='logOut'><button className='logOutBtn' onClick={handleLogout}>Log Out</button></li> {/* Nút đăng xuất */}
+                <div className='rightBtn'>
+                    <button className='accBtn' onClick={handleProfile}><FontAwesomeIcon icon={faUser} /></button>
+                    <button className='logOutBtn' onClick={handleLogout}>Log Out</button> {/*LOGOUT*/ }
+                </div>
             </ul>
         </div>
     );

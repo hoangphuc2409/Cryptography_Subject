@@ -8,6 +8,7 @@ import { Log } from './Components/Log.js';
 import { Upload } from './Components/Upload';
 import { TopMenu } from './Components/TopMenu';
 import { PicDetail } from './Components/PicDetail.js';
+import { Profile } from './Components/Profile.js';
 import ProtectedRoute from './Components/ProtectedRoute';
 // import "./ImageDatabase.js";
 //import "./LogDatabase.js";
@@ -64,6 +65,16 @@ function App() {
           <ProtectedRoute>
             <TopMenu />
             <Upload />
+          </ProtectedRoute>
+        } 
+      />
+
+      <Route 
+        path="/Profile" 
+        element={
+          <ProtectedRoute>
+            <TopMenu />
+            <Profile />
           </ProtectedRoute>
         } 
       />
