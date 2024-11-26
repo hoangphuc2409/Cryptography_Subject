@@ -1,5 +1,4 @@
 import React, { createContext, useState, useEffect } from 'react';
-
 export const UserContext = createContext(null);
 
 export const UserProvider = ({ children }) => {
@@ -17,8 +16,10 @@ export const UserProvider = ({ children }) => {
     localStorage.removeItem('user');
   };
 
+  ;
+
   return (
-    <UserContext.Provider value={{ user, setUser, logout }}>
+    <UserContext.Provider value={{ user, setUser, logout}}>
       {children}
     </UserContext.Provider>
   );

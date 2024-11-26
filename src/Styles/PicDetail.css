@@ -44,7 +44,7 @@
 
 .detailContainer .box .content .text {
     font-size: 24px;
-    margin-top: 10px; margin-left: 15px;
+    margin-top: 10px; margin-left: 20px;
     font-family: 'Open Sans' !important;
 }
 
@@ -56,4 +56,31 @@
     left: 180px;
     top: 50px;
 }
+
+.content .owner {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+    margin-top: 30px;
+    margin: 25px 0 10px 5px;
+}
+
+.content .owner .avatar {
+    display: flex;
+    align-items: center; 
+    justify-content: center;
+    width: 30px; height: 30px;
+    background-color: #e9e9e9;
+    border-radius: 50%;
+    margin-left: 10px;
+}
+
+.content .owner .username {
+    font-weight: lighter;
+    margin-top: 5px;
+    font-size: 15px;
+
+}
+
+
 

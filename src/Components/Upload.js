@@ -1,7 +1,7 @@
 import { getAuth } from 'firebase/auth';
-import { ref as dbRef, push } from 'firebase/database';
+import { ref as dbRef, push, get } from 'firebase/database';
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../Styles/Upload.css';
 import { app, database } from '../firebase-config';
 import { UpdateLog } from './UpdateLog';
@@ -11,9 +11,31 @@ function Upload() {
   const [selectedImage, setSelectedImage] = useState(null);
   const imgDatabase = dbRef(database, 'ImageInformation/Image');
   const LogDatabase = dbRef(database, 'LogHistory/Log');
+
   const auth = getAuth();
   const currentUser = auth.currentUser;
+
   const [content, setContent] = useState('');
+
+  // Lấy thông tin người upload ảnh
+  const uid = currentUser.uid;
+  const [username, setUsername] = useState(null);
+
+  useEffect(() => {
+        const fetchUsername = async () => {
+            if (uid) {
+                const userRef = dbRef(database, 'UserInformation/' + uid);
+                try {
+                    const snapshot = await get(userRef);
+                    const userData = snapshot.val();
+                    setUsername(userData.username);
+                } catch (error) {
+                    console.error("Error fetching user data:", error);
+                }
+            }
+        };
+        fetchUsername();
+  }, []);
 
   // Chọn file ảnh
   const handleImageUpload = (e) => {
@@ -29,7 +51,7 @@ function Upload() {
     }
   };
 
-  // Lấy dữ liệu nội dung ảnh
+  // Lấy nội dung ảnh
   const handleContent = (event) => {
     setContent(event.target.value);
   };
@@ -46,6 +68,7 @@ function Upload() {
                   const newImg = {
                     imgSrc: url,
                     content: content,
+                    owner: username
                   };
                   push(imgDatabase, newImg);
                   alert("Đăng ảnh thành công!");
@@ -62,6 +85,7 @@ function Upload() {
 
     return (
       <div id="uploadMain">
+        {console.log(uid)}
         <div className="imgContainer">
           <img className="imgUpload" alt="" />
         </div>

@@ -1,7 +1,7 @@
 // Thông tin chi tiết của ảnh
 import "../Styles/PicDetail.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faDownload, faEllipsis, faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import { faDownload, faEllipsis, faArrowLeft, faUser } from "@fortawesome/free-solid-svg-icons";
 import { faHeart } from "@fortawesome/free-regular-svg-icons";
 import { useNavigate, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
@@ -61,6 +61,10 @@ function PicDetail () {
                         <li className="icon" onClick={() => handleDownload(imageData.imgSrc, id)} ><FontAwesomeIcon icon={faDownload} /></li>
                         <li className="icon"><FontAwesomeIcon icon={faEllipsis} /></li>
                     </ul>
+                    <div className="owner">
+                        <div className="avatar"><FontAwesomeIcon icon={faUser} /></div>
+                        <p className="username">{imageData.owner}</p>
+                    </div>
                     <p className="text">{imageData.content}</p>
                 </div>
             </div>
