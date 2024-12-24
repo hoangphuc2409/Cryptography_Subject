@@ -1,35 +1,49 @@
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { ref } from 'firebase/database';
-import { doc, getDoc } from 'firebase/firestore';
+import { ref, set } from 'firebase/database';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { database, auth, db } from "../firebase-config";
 import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../Styles/register.css';
-import { auth, database, db } from '../firebase-config';
 import { UserContext } from './UserContext';
 import { UpdateLog } from "./UpdateLog";
 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faFacebook } from "@fortawesome/free-brands-svg-icons";
+import { faGooglePlus } from "@fortawesome/free-brands-svg-icons";
+
+import { getAuth, signInWithPopup, GoogleAuthProvider, FacebookAuthProvider} from "firebase/auth";
+import axios from "axios";
+
 const SignIn = () => {
     const LogDatabase = ref(database, 'LogHistory/Log');
+
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+
     const navigate = useNavigate();
     const [error, setError] = useState("");
-    const { setUser } = useContext(UserContext);
-    const signIn = (e) => {
-        e.preventDefault();
-        signInWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-            const userId = userCredential.user.uid;
 
-            // Cập nhật log
-            UpdateLog(LogDatabase, `Tài khoản "${email}" đăng nhập`, " ");
+    const { setUser } = useContext(UserContext);
+
+    const signIn = async (e) => {
+        e.preventDefault();
+        try {
+            // Đăng nhập với Firebase
+            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+            const userId = userCredential.user.uid;
             
-            return getDoc(doc(db, 'users', userId)).then(userDoc => {
-                return { userId, userDoc };
+            // Lấy Firebase ID token
+            const idToken = await userCredential.user.getIdToken();
+            
+            // Gửi idToken đến backend để lấy JWT
+            const response = await axios.post('http://localhost:5000/api/auth', {
+                idToken
             });
-        })
-        
-        .then(({ userId, userDoc }) => {
+            const jwt = response.data.token;
+            
+            // Lấy thông tin user role từ Firestore
+            const userDoc = await getDoc(doc(db, 'users', userId));
             let userRole = 'user';
             if (userDoc.exists()) {
                 const userData = userDoc.data();
@@ -38,29 +52,196 @@ const SignIn = () => {
                 }
             }
 
-            // Concatenate uid and role before encoding to Base64
-            const userKey = `${userId}-${userRole}`;
+            // Lưu JWT và thông tin user
+            const userInfo = {
+                jwt
+                //uid: userId,
+                //role: userRole
+            };
 
-            // Base64 encoding for the concatenated key
-            const encodedKey = btoa(userKey);
+            localStorage.setItem('user', JSON.stringify(userInfo));
+            console.log(`This is token: ${jwt}`);
 
-            const userInfo = { key: encodedKey }; //uid: userId, role: userRole, 
-            localStorage.setItem('user', JSON.stringify(userInfo)); // Save to localStorage
-            setUser(userInfo); // Update user status in UserContext
+            // Cập nhật log
+            UpdateLog(LogDatabase, `Tài khoản "${email}" đăng nhập`, " ");
+            
+            setUser(userInfo);
             navigate('/Home');
-        })
-        .catch((error) => {
+            
+        } catch (error) {
             console.error('Login error:', error);
-            setError(error.message); // Display error message
-        });
+            setError(error.message);
+        }
     };
 
+    // Xử lý login bằng Google
+    const providerGG = new GoogleAuthProvider();
+    const SignInwithGoogle = async () => {
+        try {
+            const auth = getAuth();
+            auth.languageCode = 'en';
+            
+            //Đăng nhập với Google
+            const result = await signInWithPopup(auth, providerGG); 
+            // Lấy thông tin credential
+            //const credential = GoogleAuthProvider.credentialFromResult(result);
+            //const token = credential.accessToken; //Google token
+            //console.log(`This is Google token: ${token}`);
+    
+            // Lấy thông tin user
+            const user = result.user;
+            const uid = user.uid;
+            const username = user.displayName;
+            const email = user.email;
+            const phone = user.phoneNumber;
+    
+            // Kiểm tra thông tin user trong Firestore
+            const userDoc = await getDoc(doc(db, 'users', uid));
+            let userRole = 'user';
+    
+            if (userDoc.exists()) {
+                const userData = userDoc.data();
+                if (userData.role === 'admin') {
+                    userRole = 'admin';
+                }
+            } else {
+                // Xử lý đăng nhập lần đầu
+                // Lưu vào Firestore
+                await setDoc(doc(db, "users", uid), {
+                    username: username,
+                    role: "user"
+                });
+    
+                // Lưu vào realtime database
+                await set(ref(database, 'UserInformation/' + uid), {
+                    username: username,
+                    email: email,
+                    phone: phone
+                });
+            }
+    
+            // Gửi IDToken đến server để lấy JWT
+            const idToken = await result.user.getIdToken();
+            const response = await axios.post('http://localhost:5000/api/auth', {
+                idToken
+            });
+    
+            const jwt = response.data.token;
+    
+            // Lưu thông tin user vào LocalStorage
+            const userInfo = {
+                jwt
+                //uid: uid,
+                //role: userRole
+            };
+    
+            localStorage.setItem('user', JSON.stringify(userInfo));
+            //console.log(`This is JWT: ${jwt}`);
+    
+            // Cập nhật log
+            UpdateLog(LogDatabase, `Tài khoản "${email}" đăng nhập từ Google`, " ");
+            
+            setUser(userInfo);
+            navigate('/Home');
+    
+        } catch (error) {
+            console.error('Login error:', error);
+            setError(error.message);
+        }
+    }
+
+    // Xử lý login bằng facebook
+    const providerFB = new FacebookAuthProvider();
+    const SignInwithFacebook = async () => {
+        try {
+            const auth = getAuth();
+            auth.languageCode = 'en';
+            const result = await signInWithPopup(auth, providerFB);
+            // Lấy thông tin credential
+            //const credential = FacebookAuthProvider.credentialFromResult(result);
+            //const token = credential.accessToken; //Facebook token
+            //console.log(`This is Google token: ${token}`);
+    
+            // Lấy thông tin user
+            const user = result.user;
+            const uid = user.uid;
+            const username = user.displayName;
+            const email = user.email;
+            const phone = user.phoneNumber;
+    
+            // Kiểm tra thông tin user trong Firestore
+            const userDoc = await getDoc(doc(db, 'users', uid));
+            let userRole = 'user';
+    
+            if (userDoc.exists()) {
+                const userData = userDoc.data();
+                if (userData.role === 'admin') {
+                    userRole = 'admin';
+                }
+
+            } else { // Xử lý đăng nhập lần đầu
+                // Lưu vào Firestore
+                await setDoc(doc(db, "users", uid), {
+                    username: username,
+                    role: "user"
+                });
+    
+                // Lưu vào realtime database
+                await set(ref(database, 'UserInformation/' + uid), {
+                    username: username,
+                    email: email,
+                    phone: phone
+                });
+            }
+    
+            // Gửi IDToken đến server để lấy JWT
+            const idToken = await result.user.getIdToken();
+            const response = await axios.post('http://localhost:5000/api/auth', {
+                idToken
+            });
+    
+            const jwt = response.data.token;
+            // Lưu thông tin user vào LocalStorage
+            const userInfo = {
+                jwt
+                //uid: uid,
+                //role: userRole
+            };
+
+            localStorage.setItem('user', JSON.stringify(userInfo));
+            //console.log(`This is JWT: ${jwt}`);
+    
+            // Cập nhật log
+            UpdateLog(LogDatabase, `Tài khoản "${username}" đăng nhập từ Facebook`, " ");
+
+            setUser(userInfo);
+            navigate('/Home');
+    
+        } catch (error) {
+            console.error('Login error:', error);
+            setError(error.message);
+        }
+    }
+
+    // Tạo axios instance với interceptor
+    const api = axios.create({
+        baseURL: 'http://localhost:5000/api'
+    });
+
+    api.interceptors.request.use(config => {
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (user?.jwt) {
+            config.headers.Authorization = `Bearer ${user.jwt}`;
+        }
+        return config;
+    });
+    
     return (
         <div>
-            <title>NerdyGrooves Login</title>
+            <title>Picute Login</title>
             <div>
                 <section>
-                    <div className="form-box form2">
+                    <div className="form-box form-Login">
                         <div className="button-box">
                             <div className="form-value">
                                 <form action="" onSubmit={signIn}>
@@ -79,17 +260,19 @@ const SignIn = () => {
                                                onChange={(e) => setPassword(e.target.value)}  />
                                         <label htmlFor="">Password</label>
                                     </div>
-                                    <div className="remember">
-                                        <label htmlFor=""><input type="checkbox" /> Remember Me</label>
-                                    </div>
                                     {error && <div className="error-message">{error}</div>}
                                     <button type="submit">Login</button>
                                     <div className="register">
-                                        <p>Or <a href="/Register">Register</a> if you do not have an account</p>
+                                        <p>Don't have an account?<a href="/Register"> Sign up now</a></p>
                                     </div>
                                 </form>
                             </div>
                         </div>
+                    </div>
+                    <div class="divider"><span>Or</span></div>
+                    <div className="signInMethods">
+                    <button onClick={SignInwithGoogle}><FontAwesomeIcon className="symbol googleIcon" icon={faGooglePlus}/>Coutinue with Google</button>
+                    <button onClick={SignInwithFacebook}><FontAwesomeIcon className="symbol facebookIcon" icon={faFacebook}/>Coutinue with Facebook</button>
                     </div>
                 </section>
             </div>

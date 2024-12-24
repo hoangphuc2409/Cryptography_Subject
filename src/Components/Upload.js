@@ -17,7 +17,7 @@ function Upload() {
 
   const [content, setContent] = useState('');
 
-  // Lấy thông tin người upload ảnh
+  // Lấy ID và username của người upload ảnh
   const uid = currentUser.uid;
   const [username, setUsername] = useState(null);
 
@@ -68,7 +68,8 @@ function Upload() {
                   const newImg = {
                     imgSrc: url,
                     content: content,
-                    owner: username
+                    owner: username,
+                    userID: uid
                   };
                   push(imgDatabase, newImg);
                   alert("Đăng ảnh thành công!");

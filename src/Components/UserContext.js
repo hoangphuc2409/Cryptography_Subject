@@ -1,4 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react';
+import { getAuth, signOut } from "firebase/auth";
 export const UserContext = createContext(null);
 
 export const UserProvider = ({ children }) => {
@@ -12,6 +13,8 @@ export const UserProvider = ({ children }) => {
   }, [user]);
 
   const logout = () => {
+    const auth = getAuth();
+    signOut(auth)
     setUser(null);
     localStorage.removeItem('user');
   };

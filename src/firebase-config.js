@@ -3,7 +3,6 @@ import { initializeApp } from "firebase/app";
 import { getDatabase } from "firebase/database";
 import {getAuth} from "firebase/auth";
 
-
 const firebaseConfig = {
     apiKey: "AIzaSyCZghluebhQYqIkaz31GsFyO2QPn-UjNDQ",
     authDomain: "music-9ae9f.firebaseapp.com",

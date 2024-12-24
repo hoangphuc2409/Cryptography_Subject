@@ -1,11 +1,14 @@
 import React from 'react';
 import { useState } from 'react';
 import '../Styles/register.css';
-import { auth } from '../firebase-config';
+
+import { auth, database, db } from '../firebase-config';
 import { createUserWithEmailAndPassword  } from 'firebase/auth';
+
 import { useNavigate } from 'react-router-dom';
-import { database } from '../firebase-config';
+
 import { ref,set } from 'firebase/database';
+import { doc, setDoc } from 'firebase/firestore';
 
 function Register() {
 const [name, setName] = useState('');
@@ -36,25 +39,37 @@ const handleConfirm = (event) => {
 
 //Kiểm tra lại Password 
 const checkConfirm = (event) =>{
-     event.preventDefault();
+    event.preventDefault();
     if(password !== confirm){
         setNotify("The password doesn't match. Please re-enter!");
     } 
-    else
-    {   //Đưa thông tin đăng ký lên database
+
+    else {  //Đưa thông tin đăng ký lên database
+        try{
         createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
             const user = userCredential.user;
             const uid = user.uid;
-            set(ref(database, 'UserInformation/'+ uid), {
+
+            set(ref(database, 'UserInformation/'+ uid), { //Lưu vào realtime database
                 username: name,
                 email: email,
                 phone: phone
             });
-            if(notify === ""){
+
+            setDoc(doc(db, "users", uid), { //Lưu vào Firestore
+                username: name,
+                role: "user"
+            });
+
+            if(notify === ""){ //Nếu không có thông báo lỗi thì chuyển đến trang Login
                 navigate('/');
             }
         })
+
+        } catch (error) {
+            console.log(error);
+        }
     }
 }
 
@@ -66,7 +81,7 @@ const checkConfirm = (event) =>{
                     <div className="form-box">
                         <div className="button-box">
                             <div className="form-value">
-                                <form action="" onSubmit={checkConfirm}>
+                                <form action="" onSubmit={checkConfirm} >
                                     <h2 className='Register-head'>Register</h2>
 
                                     <div className="inputbox">
@@ -97,7 +112,7 @@ const checkConfirm = (event) =>{
                                     {notify && <p className='Notify'>{notify}</p>}
                                     <button type="submit">Register</button>
                                     <div className="register">
-                                        <p>Or <a href="/">LOGIN</a> if you already have an account</p>
+                                        <p>Already have an account? <a href="/">Log in here</a></p>
                                     </div>
                                 </form>
                             </div>

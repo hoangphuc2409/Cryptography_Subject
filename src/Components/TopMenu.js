@@ -1,20 +1,75 @@
 import '../Styles/TopMenu.css';
 import { Link } from 'react-router-dom';
-import React, { useContext, useState} from 'react';
+import React, { useContext, useState, useEffect} from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from './UserContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser } from '@fortawesome/free-solid-svg-icons';
+
+import axios from "axios";
 
 function TopMenu() {
     const navigate = useNavigate();
 
     //LogOut button
     const { logout } = useContext(UserContext);
+
     const handleLogout = () => {
         logout();
         navigate('/');
     };
+
+    // Hàm kiểm tra token
+    const checkTokenExpiration = async () => {
+    let user = localStorage.getItem('user'); //Nơi lưu token
+    let token = user.jwt;
+    
+    if (!token) {
+        alert("Phiên làm việc đã hết hạn. Vui lòng đăng nhập lại!");
+        handleLogout();
+        return;
+    }
+
+    try {
+        const response = await fetch('http://localhost:5000/api/verify-token', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            const data = await response.json();
+            if (data.expired) {
+                handleLogout();
+            }
+        }
+    } catch (error) {
+        console.error('Token verification error:', error);
+        handleLogout();
+    }
+    };
+
+    // Kiểm tra token định kỳ
+    useEffect(() => {
+    const interval = setInterval(() => {
+        checkTokenExpiration();
+    }, 60000); // Kiểm tra mỗi phút
+
+    return () => clearInterval(interval);
+    }, []);
+
+    // Thêm interceptor cho axios
+    axios.interceptors.response.use(
+    response => response,
+    error => {
+        if (error.response && error.response.status === 401) {
+            handleLogout();
+        }
+        return Promise.reject(error);
+    }
+    );
     
     //Xử lý button đang được chọn
     const [activeIndex, setActiveIndex] = useState(null);
