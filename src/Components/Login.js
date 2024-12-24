@@ -56,7 +56,7 @@ const SignIn = () => {
             const userInfo = { token: jwt };
             localStorage.setItem('user', JSON.stringify(userInfo));
 
-            //console.log(`This is token: ${jwt}`);
+            console.log(`This is token: ${jwt}`);
 
             // Cập nhật log
             UpdateLog(LogDatabase, `Tài khoản "${email}" đăng nhập`, " ");
@@ -127,8 +127,6 @@ const SignIn = () => {
             // Lưu thông tin user vào LocalStorage
             const userInfo = { token: jwt };
             localStorage.setItem('user', JSON.stringify(userInfo));
-
-            //console.log(`This is JWT: ${jwt}`);
     
             // Cập nhật log
             UpdateLog(LogDatabase, `Tài khoản "${email}" đăng nhập từ Google`, " ");
@@ -171,6 +169,7 @@ const SignIn = () => {
                 // Lưu vào Firestore
                 await setDoc(doc(db, "users", uid), {
                     username: username,
+                    email: email,
                     role: "user"
                 });
     

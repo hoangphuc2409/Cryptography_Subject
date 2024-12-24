@@ -6,12 +6,12 @@ import { UserContext } from './UserContext';
 import { UpdateLog } from "./UpdateLog";
 import { jwtDecode } from "jwt-decode";
 
-function Settings() {
+function MyPhotos() {
   // Decode JWT
   const { user } = useContext(UserContext);
   const decoded = jwtDecode(user.token);
-  const userRole = decoded.role;
   const userEmail = decoded.email;
+  const userID = decoded.uid;
 
   const [imageList, setImageList] = useState([]);
   const LogDatabase = ref(database, 'LogHistory/Log');
@@ -23,11 +23,15 @@ function Settings() {
       snapshot.forEach(childSnapshot => {
         let key = childSnapshot.key;
         let data = childSnapshot.val();
+
+        // Chỉ Lấy ảnh do user upload
+        if (data.userID === userID){
         images.push({
           "id": key,
           "imgSrc": data.imgSrc,
           "content": data.content
         });
+      }
     })
    })
 
@@ -40,21 +44,23 @@ function Settings() {
     UpdateLog(LogDatabase, `Xóa 1 ảnh khỏi database. ID ảnh bị xóa: ${id}`, userEmail);
   };
 
-  if(!user || userRole !== "admin"){
-    return (
-      <div className="errorScreen">
-        <p>Tính năng này không khả dụng với bạn!</p>
-      </div>
-    );
-  } else {
+  //Xử lý download
+  const handleDownload = (imageSrc, id) => {
+    const link = document.createElement("a");
+    link.href = imageSrc;
+    link.download = "image.jpg";
+    link.target = "_blank";
+    link.click();
+    UpdateLog(LogDatabase, `Tải 1 ảnh về máy. ID của ảnh được tải: ${id}`, userEmail);
+  };
 
     return (
       <div>
         <table id="infoTable">
           <thead>
             <tr>
-              <th className="imgSrc">Ảnh</th>
-              <th className="content">Nội dung</th>
+              <th className="imgSrc">Uploaded photos</th>
+              <th className="content">Content</th>
               <th className="settings"></th>
             </tr>
           </thead>
@@ -66,6 +72,7 @@ function Settings() {
                 </td>
                 <td className="rowContent">{image.content}</td>
                 <td><button className="btnDelete" onClick={() => {handleDelete(image.id)}}>Delete</button></td>
+                <button className="btnDownload" onClick={() => handleDownload(image.imgSrc)}>Download</button>
               </tr>
             ))}
           </tbody>
@@ -73,8 +80,8 @@ function Settings() {
         <div className="space"></div>
       </div>
     );
-  }
+  
 }
 
-export { Settings };
+export { MyPhotos };
 

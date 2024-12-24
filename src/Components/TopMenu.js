@@ -30,7 +30,7 @@ function TopMenu() {
         return;
     }
 
-    try {
+    try { // Gửi token cho server kiểm tra
         const response = await fetch('http://localhost:5000/api/verify-token', {
             method: 'POST',
             headers: {
@@ -39,9 +39,10 @@ function TopMenu() {
             }
         });
 
-        if (!response.ok) {
+        if (!response.ok) { //Logout nếu token hết hạn
             const data = await response.json();
             if (data.expired) {
+                alert("Phiên làm việc đã hết hạn. Vui lòng đăng nhập lại!");
                 handleLogout();
             }
         }
@@ -51,14 +52,14 @@ function TopMenu() {
     }
     };
 
-    // Kiểm tra token định kỳ
+    // Kiểm tra token định kỳ mỗi 1 phút
     useEffect(() => {
     const interval = setInterval(() => {
         checkTokenExpiration();
-    }, 60000); // Kiểm tra mỗi phút
+    }, 600000);
 
     return () => clearInterval(interval);
-    }, []);
+    }, [checkTokenExpiration]);
 
     // Thêm interceptor cho axios
     axios.interceptors.response.use(
@@ -134,6 +135,19 @@ function TopMenu() {
                                  color: activeIndex === 3 ? 'white' : 'black',
                                  transition: 'border 0.3s'}}
                     >Log History
+                    </button>
+                    </Link>
+                </li>
+
+                {/*MY PHOTO*/ }
+                <li onClick={() => handleBtnClick(4)}>
+                    <Link to="/myPhotos">
+                    <button
+                        style={{ border: activeIndex === 4 ? '1px solid black' : 'none', 
+                                 backgroundColor: activeIndex === 4 ? 'black' : 'white',
+                                 color: activeIndex === 4 ? 'white' : 'black',
+                                 transition: 'border 0.3s'}}
+                    >My Photos
                     </button>
                     </Link>
                 </li>

@@ -10,6 +10,7 @@ import { TopMenu } from './Components/TopMenu';
 import { PicDetail } from './Components/PicDetail.js';
 import { Profile } from './Components/Profile.js';
 import ProtectedRoute from './Components/ProtectedRoute';
+import { MyPhotos } from './Components/MyPhotos.js';
 // import "./ImageDatabase.js";
 //import "./LogDatabase.js";
 
@@ -78,6 +79,17 @@ function App() {
           </ProtectedRoute>
         } 
       />
+
+      <Route 
+        path="/myPhotos" 
+        element={
+          <ProtectedRoute>
+            <TopMenu />
+            <MyPhotos />
+          </ProtectedRoute>
+        } 
+      />
+
       </Routes>
     </div>
   );

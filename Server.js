@@ -42,7 +42,7 @@ app.post('/api/auth', async (req, res) => {
         role: userRole
       },
       JWT_SECRET,
-      { expiresIn: '1h' } //Hết hạn sau 2 phút
+      { expiresIn: '1H' }
     );
 
     res.json({ token: jwtToken });
@@ -61,7 +61,7 @@ const verifyToken = (req, res, next) => {
         return res.status(401).json({ error: 'Access denied' });
     }
 
-    try {
+    try { // Kiểm tra token bằng secret key
         const verified = jwt.verify(token, JWT_SECRET);
         req.user = verified;
         next();
