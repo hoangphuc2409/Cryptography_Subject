@@ -19,7 +19,7 @@ function TopMenu() {
         navigate('/');
     };
 
-    // Hàm kiểm tra token
+    // Check JWT
     const checkTokenExpiration = async () => {
     let user = localStorage.getItem('user'); //Nơi lưu token
     let token = user.jwt;
@@ -70,13 +70,13 @@ function TopMenu() {
         return Promise.reject(error);
     }
     );
-    
+
     //Xử lý button đang được chọn
     const [activeIndex, setActiveIndex] = useState(null);
     const handleBtnClick = (index) => {
         setActiveIndex(index);
     };
-
+    
     //Profile button
     const handleProfile = () => {
         navigate('/Profile');

@@ -1,9 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { database } from "../firebase-config";
 import { onValue, ref } from "firebase/database";
 import "../Styles/Log.css";
+import { UserContext } from "./UserContext";
+import {jwtDecode} from "jwt-decode";
+
 
 function Log() {
+    const {user} = useContext(UserContext)
 
     const [logs, setLogs] = useState([]);
     useEffect(() => {
@@ -27,6 +31,27 @@ function Log() {
       setLogs(logsArray);
       });
   }, []);
+
+  //Kiểm tra role của user
+  const checkRoleFromToken = (token) => {
+    try {
+        if (token) {
+            const decoded = jwtDecode(token, false);
+            return {
+                uid: decoded.uid,
+                email: decoded.email,
+                role: decoded.role
+            };
+        }
+        return null;
+    } catch (error) {
+        console.error('Error decoding token:', error);
+        return null;
+    }
+  };
+
+  const {role} = checkRoleFromToken(user?.token);
+  console.log(`This is role: ${role}`);
 
    return (
     <div>

@@ -53,14 +53,10 @@ const SignIn = () => {
             }
 
             // Lưu JWT và thông tin user
-            const userInfo = {
-                jwt
-                //uid: userId,
-                //role: userRole
-            };
-
+            const userInfo = { token: jwt };
             localStorage.setItem('user', JSON.stringify(userInfo));
-            console.log(`This is token: ${jwt}`);
+
+            //console.log(`This is token: ${jwt}`);
 
             // Cập nhật log
             UpdateLog(LogDatabase, `Tài khoản "${email}" đăng nhập`, " ");
@@ -129,13 +125,9 @@ const SignIn = () => {
             const jwt = response.data.token;
     
             // Lưu thông tin user vào LocalStorage
-            const userInfo = {
-                jwt
-                //uid: uid,
-                //role: userRole
-            };
-    
+            const userInfo = { token: jwt };
             localStorage.setItem('user', JSON.stringify(userInfo));
+
             //console.log(`This is JWT: ${jwt}`);
     
             // Cập nhật log
@@ -157,10 +149,6 @@ const SignIn = () => {
             const auth = getAuth();
             auth.languageCode = 'en';
             const result = await signInWithPopup(auth, providerFB);
-            // Lấy thông tin credential
-            //const credential = FacebookAuthProvider.credentialFromResult(result);
-            //const token = credential.accessToken; //Facebook token
-            //console.log(`This is Google token: ${token}`);
     
             // Lấy thông tin user
             const user = result.user;
@@ -199,17 +187,11 @@ const SignIn = () => {
             const response = await axios.post('http://localhost:5000/api/auth', {
                 idToken
             });
-    
             const jwt = response.data.token;
+            
             // Lưu thông tin user vào LocalStorage
-            const userInfo = {
-                jwt
-                //uid: uid,
-                //role: userRole
-            };
-
+            const userInfo = { token: jwt };
             localStorage.setItem('user', JSON.stringify(userInfo));
-            //console.log(`This is JWT: ${jwt}`);
     
             // Cập nhật log
             UpdateLog(LogDatabase, `Tài khoản "${username}" đăng nhập từ Facebook`, " ");
