@@ -44,16 +44,6 @@ function MyPhotos() {
     UpdateLog(LogDatabase, `Xóa 1 ảnh khỏi database. ID ảnh bị xóa: ${id}`, userEmail);
   };
 
-  //Xử lý download
-  const handleDownload = (imageSrc, id) => {
-    const link = document.createElement("a");
-    link.href = imageSrc;
-    link.download = "image.jpg";
-    link.target = "_blank";
-    link.click();
-    UpdateLog(LogDatabase, `Tải 1 ảnh về máy. ID của ảnh được tải: ${id}`, userEmail);
-  };
-
     return (
       <div>
         <table id="infoTable">
@@ -72,7 +62,7 @@ function MyPhotos() {
                 </td>
                 <td className="rowContent">{image.content}</td>
                 <td><button className="btnDelete" onClick={() => {handleDelete(image.id)}}>Delete</button></td>
-                <button className="btnDownload" onClick={() => handleDownload(image.imgSrc)}>Download</button>
+          
               </tr>
             ))}
           </tbody>
